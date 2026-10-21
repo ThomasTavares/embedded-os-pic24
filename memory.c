@@ -3,8 +3,7 @@
 #include "os_config.h"
 #include "types.h"
 
-char heap_mem[HEAP_SIZE];
-mem_block_info_t *heap_ptr = NULL;
+uint8_t heap_mem[HEAP_SIZE];
 
 void os_heap_init()
 {
@@ -22,7 +21,7 @@ void *os_malloc(uint16_t nr_bytes)
     if (nr_bytes == 0) return NULL;
 
     while (heap_ptr + sizeof(mem_block_info_t) <= heap_end) {   // verifies if there is available space
-        mem_block_info_t *blk_info = (mem_block_info_t*)heap_ptr;
+        mem_block_info_t *blk_info = (mem_block_info_t*)heap_mem;
 
         /// verifies if the block is big enough for allocation
         if (blk_info->free && blk_info->size >= nr_bytes) {

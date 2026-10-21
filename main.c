@@ -12,9 +12,9 @@ int main(void)
     os_config();
     
     // create user tasks
-    create_task(task_A, 5);
+    //create_task(task_A, 5);
     create_task(task_B, 5);
-    create_task(task_C, 5);
+    //create_task(task_C, 5);
     
     // init scheduler
     os_start_scheduler();
