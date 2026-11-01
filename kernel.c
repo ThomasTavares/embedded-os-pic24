@@ -38,6 +38,7 @@ void create_task(callback task, uint8_t priority)
     new_task->task_id       = ReadyQueue.queue_size+1;
     new_task->task_func     = task;
     new_task->task_priority = priority;
+    new_task->original_priority = priority;
     new_task->task_state    = READY;
     new_task->task_delay    = 0;
     

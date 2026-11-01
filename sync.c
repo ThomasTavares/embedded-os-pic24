@@ -61,6 +61,11 @@ void mutex_lock(mutex_t *m)
         m->is_locked = 1;
         m->owner_id = task_running;
     } else {
+        // priority inheritance logic
+        if (ReadyQueue.tasks[task_running].task_priority > ReadyQueue.tasks[m->owner_id].task_priority) {
+            ReadyQueue.tasks[m->owner_id].task_priority = ReadyQueue.tasks[task_running].task_priority;
+        }
+        
         m->mutex_queue[m->m_queue_input] = task_running;
         m->m_queue_input = __builtin_modsd(m->m_queue_input + 1, MAX_TASKS);
         ReadyQueue.tasks[task_running].task_state = BLOCKED;
@@ -75,6 +80,9 @@ void mutex_unlock(mutex_t *m)
     __builtin_disable_interrupts();
     
     if (m->owner_id == task_running) {
+        // restore original priority
+        ReadyQueue.tasks[task_running].task_priority = ReadyQueue.tasks[task_running].original_priority;
+        
         if (m->m_queue_input == m->m_queue_output) {
             // queue is empty, free mutex
             m->is_locked = 0;

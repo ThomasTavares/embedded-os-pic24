@@ -25,6 +25,7 @@ typedef enum {                          // available task states
 typedef struct {                        // struct for the tcb
     uint8_t     task_id;
     uint8_t     task_priority;
+    uint8_t     original_priority;      // added for priority inheritance
     uint16_t    task_delay;
     callback    task_func;
     state_t     task_state;
