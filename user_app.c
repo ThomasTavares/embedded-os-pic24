@@ -4,7 +4,8 @@
 #include "kernel.h"
 #include "sync.h"
 #include "message.h"
-#include "io.h"
+#include "uart.h"
+#include "pwm.h"
 
 m_queue_t message_queue;
 
@@ -31,9 +32,17 @@ TASK task_A()
 
 TASK task_B()
 {
+    /* pwm_driver_t pwm;
+    
+    pwm_config(&pwm, 1000);
+    pwm_start(&pwm);
+    pwm_set_duty(&pwm, 75); // 75% */
+    
     while (1) {
         LATEbits.LATE1 ^= 1;
     }
+    
+    // pwm_stop(&pwm);
 }
 
 TASK task_C()
