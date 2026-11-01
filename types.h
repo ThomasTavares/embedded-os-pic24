@@ -45,7 +45,11 @@ typedef struct {                        // struct for the semaphore
 } sem_t;
 
 typedef struct {
-    // owner task (id)
+    uint8_t owner_id;                   // owner task id (255 if free)
+    uint8_t is_locked;                  // 1 if locked, 0 if free
+    uint8_t mutex_queue[MAX_TASKS];     // queue for blocked tasks
+    uint8_t m_queue_input;              // input index
+    uint8_t m_queue_output;             // output index
 } mutex_t;
 
 typedef struct {                        // struct for the queue of messages

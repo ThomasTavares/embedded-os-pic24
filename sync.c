@@ -47,15 +47,51 @@ void sem_post(sem_t *s)
 
 void mutex_init(mutex_t *m)
 {
-    
+    m->owner_id         = 255;
+    m->is_locked        = 0;
+    m->m_queue_input    = 0;
+    m->m_queue_output   = 0;
 }
 
 void mutex_lock(mutex_t *m)
 {
+    __builtin_disable_interrupts();
     
+    if (m->is_locked == 0) {
+        m->is_locked = 1;
+        m->owner_id = task_running;
+    } else {
+        m->mutex_queue[m->m_queue_input] = task_running;
+        m->m_queue_input = __builtin_modsd(m->m_queue_input + 1, MAX_TASKS);
+        ReadyQueue.tasks[task_running].task_state = BLOCKED;
+        CONTEXT_SWITCH();
+    }
+    
+    __builtin_enable_interrupts();
 }
 
 void mutex_unlock(mutex_t *m)
 {
+    __builtin_disable_interrupts();
     
+    if (m->owner_id == task_running) {
+        if (m->m_queue_input == m->m_queue_output) {
+            // queue is empty, free mutex
+            m->is_locked = 0;
+            m->owner_id = 255;
+        } else {
+            // pass ownership to the next blocked task
+            uint8_t next_task = m->mutex_queue[m->m_queue_output];
+            m->m_queue_output = __builtin_modsd(m->m_queue_output + 1, MAX_TASKS);
+            
+            m->owner_id = next_task;
+            ReadyQueue.tasks[next_task].task_state = READY;
+            
+            // yield cpu
+            ReadyQueue.tasks[task_running].task_state = READY;
+            CONTEXT_SWITCH();
+        }
+    }
+    
+    __builtin_enable_interrupts();
 }
