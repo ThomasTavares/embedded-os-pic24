@@ -54,7 +54,7 @@ typedef struct {
 } mutex_t;
 
 typedef struct {                        // struct for the queue of messages
-    char    queue[SIZE_MESSAGE_QUEUE];
+    char    *queue;
     uint8_t pos_write;
     uint8_t pos_read;
     sem_t   s_write;                    // write control semaphore

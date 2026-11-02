@@ -1,4 +1,6 @@
-#include <p24FJ128GA010.h>
+#include <xc.h>
+#include <libpic30.h>
+
 #include "pwm.h"
 
 void pwm_config(pwm_driver_t *pwm, uint16_t freq)
@@ -8,7 +10,10 @@ void pwm_config(pwm_driver_t *pwm, uint16_t freq)
     pwm->period = (FCY / freq) - 1;
     pwm->cycle  = 0;
     pwm->status = false;
-
+    
+    LATDbits.LATD0 = 0;
+    TRISDbits.TRISD0 = 0;
+    
     OC1CON = 0;
     T2CON = 0;
     OC1CONbits.OCTSEL = 0;  // timer 2
@@ -49,11 +54,11 @@ void pwm_stop(pwm_driver_t *pwm)
 
 void pwm_set_duty(pwm_driver_t *pwm, uint16_t duty)
 {
-    if (!pwm->status || duty == 0) return;
+    if (!pwm->status) return;
 
-    if (duty > 100) duty = 100;
+    if (duty > 100u) duty = 100u;
     uint32_t cycle = ((uint32_t)(pwm->period + 1UL) * duty)/100UL;
-    if (cycle > pwm->period) cycle = pwm->period;
+    //if (cycle > pwm->period) cycle = pwm->period;
     
     pwm->cycle = (uint16_t)cycle;
     //OC1R  = pwm->cycle;

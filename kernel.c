@@ -13,13 +13,14 @@ uint16_t *task_running_tos = NULL;  // pointer to the top of the task stack (tas
 void os_config()
 {
     ReadyQueue.queue_size = 0;
-    config_timer1();
-    config_int0();
-    config_user_app();
-    
+
     # if DYNAMIC_ALLOC
     os_heap_init();
     #endif
+
+    config_timer1();
+    config_int0();
+    config_user_app();
     
     create_task(idle, 4);
 }

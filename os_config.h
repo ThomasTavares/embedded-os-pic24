@@ -18,7 +18,7 @@
 
 #define SIZE_MESSAGE_QUEUE  4   // max amount of messages on queue
 
-#define DYNAMIC_ALLOC     OFF
+#define DYNAMIC_ALLOC      ON
 #define HEAP_SIZE        1024   // size of the heap region of memory
 
 #define RR_SCHEDULER        1   // round-robin task scheduler
