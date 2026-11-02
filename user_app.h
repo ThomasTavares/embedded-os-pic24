@@ -15,6 +15,7 @@ void config_user_app();
 TASK task_A();
 TASK task_B();
 TASK task_C();
+TASK task_adc_test(void);
 
 #endif	/* USER_APP_H */
 

@@ -5,8 +5,11 @@
 #include "kernel.h"
 #include "message.h"
 #include "uart.h"
+#include "adc.h"
+#include "pwm.h"
 
 m_queue_t message_queue = {0};
+static pwm_driver_t pwm_out;
 
 static void test_fail(const char *message)
 {
@@ -30,7 +33,6 @@ void config_user_app(void)
     TRISEbits.TRISE0 = 0;
     TRISEbits.TRISE1 = 0;
     TRISEbits.TRISE2 = 0;
-
     TRISFbits.TRISF3 = 0;
 
     UART_init(9600);
@@ -129,6 +131,16 @@ void config_user_app(void)
     UART_write_new_line(
         "Iniciando produtor e consumidor..."
     );
+    
+    adc_init();
+    
+    UART_write_new_line(
+        "ADC inicializado em AN0"
+    );
+    
+    pwm_config(&pwm_out, 1000);
+    pwm_start(&pwm_out);
+    pwm_set_duty(&pwm_out, 0);
 }
 
 /*
@@ -191,5 +203,35 @@ TASK task_C(void)
         if (index == 4) {
             index = 0;
         }
+    }
+}
+
+TASK task_adc_test(void)
+{
+    uint16_t sample;
+
+    while (1) {
+        if (adc_read(&sample)) {
+            uint16_t duty;
+
+            duty = (uint16_t)(
+                ((uint32_t)sample * 100UL) / 1023UL
+            );
+
+            pwm_set_duty(&pwm_out, duty);
+
+            UART_write_string("ADC = ");
+            UART_write_int((int)sample);
+
+            UART_write_string(" | Duty = ");
+            UART_write_int((int)duty);
+            UART_write_new_line("%");
+
+            LATEbits.LATE0 ^= 1;
+        } else {
+            UART_write_new_line("ERRO: leitura do ADC");
+        }
+
+        task_delay(25);
     }
 }
