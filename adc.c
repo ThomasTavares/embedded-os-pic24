@@ -61,12 +61,13 @@ bool adc_select_channel(uint8_t channel)
 bool adc_read(uint16_t *value)
 {
     uint16_t timeout = 60000u;
+    // uint32_t timeout = 600000ul;
 
     if (value == NULL || !AD1CON1bits.ADON) {
         return false;
     }
 
-    AD1CON1bits.DONE = 0;
+    // AD1CON1bits.DONE = 0;
     AD1CON1bits.SAMP = 1;
 
     while (!AD1CON1bits.DONE) {
