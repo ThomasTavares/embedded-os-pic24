@@ -13,14 +13,12 @@
 void config_user_app();
 void validate_message_queue();
 
-/* TASK task_A();
-TASK task_B();
-TASK task_C();
-TASK task_adc_test(void); */
-
-TASK task_producer();
-TASK task_consumer();
+TASK task_button();
+TASK task_cmd();
 TASK task_adc();
 TASK task_pwm();
+TASK task_rr_a();
+TASK task_rr_b();
 
 #endif	/* USER_APP_H */
+

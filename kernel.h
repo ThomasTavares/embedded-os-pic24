@@ -20,6 +20,7 @@ void init_stack(tcb_t *task);
 void task_yield();
 void task_delay(uint16_t time);
 void task_release();
+uint8_t task_get_priority();
 
 TASK idle();
 
