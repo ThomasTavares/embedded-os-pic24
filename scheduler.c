@@ -9,20 +9,33 @@ extern queue_t ReadyQueue;
 extern uint8_t task_running;
 extern uint16_t *task_running_tos;
 
+// escalonador ativo: comeca com DEFAULT_SCHEDULER e pode ser trocado em execucao
+static volatile uint8_t active_scheduler = DEFAULT_SCHEDULER;
+
+void scheduler_set(uint8_t type)
+{
+    if (type == RR_SCHEDULER || type == PRIOR_SCHEDULER) {
+        active_scheduler = type;    // escrita de 1 byte: atomica
+    }
+}
+
+uint8_t scheduler_get(void)
+{
+    return active_scheduler;
+}
+
 uint8_t scheduler()
 {
-#if DEFAULT_SCHEDULER == RR_SCHEDULER
+    if (active_scheduler == PRIOR_SCHEDULER) {
+        return prior_scheduler();
+    }
     return rr_scheduler();
-#else
-    return prior_scheduler();
-#endif
 }
 
 uint8_t rr_scheduler()
 {
     uint8_t next_task = task_running, idle_count = 0;
     do {
-        //next_task = (next_task + 1) % ReadyQueue.queue_size;
         next_task = __builtin_modsd(next_task + 1, ReadyQueue.queue_size);
         if (ReadyQueue.tasks[next_task].task_func == idle) {
             idle_count++;

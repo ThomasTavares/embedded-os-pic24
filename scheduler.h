@@ -14,5 +14,8 @@ uint8_t scheduler();
 uint8_t rr_scheduler();
 uint8_t prior_scheduler();
 
+void    scheduler_set(uint8_t type);   // RR_SCHEDULER ou PRIOR_SCHEDULER
+uint8_t scheduler_get(void);
+
 #endif	/* SCHEDULER_H */
 

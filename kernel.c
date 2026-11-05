@@ -103,6 +103,11 @@ void task_release()
     }
 }
 
+uint8_t task_get_priority()
+{
+    return ReadyQueue.tasks[task_running].task_priority;
+}
+
 TASK idle()
 {
     while (1) {
